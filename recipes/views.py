@@ -2,9 +2,18 @@
 from django.shortcuts import render
 from utils.recipes.factory import make_recipe
 
+from recipes.models import Recipe
+
 
 def home(request):
-    return render(request, 'recipes/pages/home.html', context={'recipes': [make_recipe() for _ in range(10)]})
+    recipe = Recipe.objects.filter(is_published=True).order_by('-id')
+    return render(request, 'recipes/pages/home.html', context={'recipes': recipe})
+
+
+def category(request, category_id):
+    recipe = Recipe.objects.filter(
+        category__id=category_id, is_published=True).order_by('-id')
+    return render(request, 'recipes/pages/category.html', context={'recipes': recipe})
 
 
 def recipe(request, id):
